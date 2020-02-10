@@ -1,0 +1,4 @@
+{"level":"error","time":"2019-11-13T14:48:52.011+0800","linenum":"E:/go/src/newhis/server/main.go:13","msg":"lsdj","serviceName":"GoHis"}
+{"level":"error","time":"2019-11-13T14:50:46.707+0800","linenum":"E:/go/src/newhis/server/main.go:13","msg":"lsdj","serviceName":"GoHis"}
+{"level":"error","time":"2019-11-13T14:53:29.294+0800","linenum":"E:/go/src/newhis/server/main.go:13","msg":"lsdj","serviceName":"GoHis"}
+{"level":"error","time":"2019-11-13T15:00:24.149+0800","linenum":"E:/go/src/newhis/server/main.go:13","msg":"lsdj","serviceName":"GoHis"}
