@@ -7,16 +7,12 @@ import (
 	//_ "his6/base/middle" //PS: 仅写在middle后面的模块受middle影响
 	_ "his6/base/consul"
 	_ "his6/server/common/handler"
-	_ "his6/server/demo"
-	_ "his6/server/demo1"
+	_ "his6/server/metrics"
+	//_ "his6/server/demo"
+	//_ "his6/server/demo1"
 )
 
 func main() {
-	// nlogs.Error("lsdj")
-	// nlogs.Info("无法获取网址",
-	// 	zap.String("url", "http://www.baidu.com"),
-	// 	zap.Int("attempt", 3),
-	// 	zap.Duration("backoff", time.Second))
 
 	//region eureka register
 

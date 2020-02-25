@@ -60,7 +60,7 @@ func init() {
 
 /// SETUP-001
 /// /setup/newpsw
-func (stp *SetupController) GetNewpsw(ctx iris.Context) {
+func (stp *SetupController) PostNewpsw(ctx iris.Context) {
 	empId, _ := ctx.URLParamInt("empId")
 	opsw := ctx.URLParam("opsw")
 	npsw := ctx.URLParam("npsw")
@@ -73,7 +73,6 @@ func (stp *SetupController) GetNewpsw(ctx iris.Context) {
 	}
 	s := strconv.Itoa(i)
 	ctx.Text(s)
-	ctx.Next()
 }
 
 /// SETUP-002
@@ -91,7 +90,6 @@ func (stp *SetupController) GetFuncpoint(ctx iris.Context) {
 	}
 
 	ctx.JSON(fp)
-	ctx.Next()
 }
 
 /// SETUP-003
@@ -105,7 +103,6 @@ func (stp *SetupController) GetModule(ctx iris.Context) {
 	}
 
 	ctx.JSON(modules)
-	ctx.Next()
 }
 
 /// SETUP-004
@@ -119,7 +116,6 @@ func (stp *SetupController) GetObject(ctx iris.Context) {
 	}
 
 	ctx.JSON(objects)
-	ctx.Next()
 }
 
 /// SETUP-005
@@ -142,7 +138,6 @@ func (stp *SetupController) PostModuleadd(ctx iris.Context) {
 	}
 
 	ctx.JSON(1)
-	ctx.Next()
 }
 
 /// SETUP-006
@@ -159,7 +154,6 @@ func (stp *SetupController) PostObjectadd(ctx iris.Context) {
 	}
 
 	ctx.JSON(1)
-	ctx.Next()
 }
 
 /// SETUP-007
@@ -174,7 +168,6 @@ func (stp *SetupController) PostModuleset(ctx iris.Context) {
 		return
 	}
 	ctx.Text("1")
-	ctx.Next()
 }
 
 /// SETUP-008
@@ -191,7 +184,6 @@ func (stp *SetupController) PostObjectset(ctx iris.Context) {
 	}
 
 	ctx.Text("1")
-	ctx.Next()
 }
 
 /// SETUP-009
@@ -206,7 +198,6 @@ func (stp *SetupController) GetFplist(ctx iris.Context) {
 	} else {
 		ctx.JSON(fps)
 	}
-	ctx.Next()
 }
 
 /// SETUP-010
@@ -222,7 +213,6 @@ func (stp *SetupController) GetFprole(ctx iris.Context) {
 	}
 
 	ctx.JSON(roles)
-	ctx.Next()
 }
 
 /// SETUP-011
@@ -238,7 +228,6 @@ func (stp *SetupController) GetFpemp(ctx iris.Context) {
 	}
 
 	ctx.JSON(emps)
-	ctx.Next()
 }
 
 /// SETUP-012
@@ -254,7 +243,6 @@ func (stp *SetupController) GetRole(ctx iris.Context) {
 	}
 
 	ctx.JSON(roles)
-	ctx.Next()
 }
 
 /// SETUP-013
@@ -270,7 +258,6 @@ func (stp *SetupController) GetEmp(ctx iris.Context) {
 	}
 
 	ctx.JSON(emps)
-	ctx.Next()
 }
 
 /// SETUP-014
@@ -286,7 +273,6 @@ func (stp *SetupController) GetSysrole(ctx iris.Context) {
 	}
 
 	ctx.JSON(roles)
-	ctx.Next()
 }
 
 /// SETUP-015
@@ -302,7 +288,6 @@ func (stp *SetupController) GetSysemp(ctx iris.Context) {
 	}
 
 	ctx.JSON(emps)
-	ctx.Next()
 }
 
 /// SETUP-016
@@ -318,7 +303,6 @@ func (stp *SetupController) GetMenurole(ctx iris.Context) {
 	}
 
 	ctx.JSON(roles)
-	ctx.Next()
 }
 
 /// SETUP-017
@@ -334,7 +318,6 @@ func (stp *SetupController) GetMenuemp(ctx iris.Context) {
 	}
 
 	ctx.JSON(emps)
-	ctx.Next()
 }
 
 /// SETUP-018
@@ -348,7 +331,6 @@ func (stp *SetupController) GetSystemget(ctx iris.Context) {
 	}
 
 	ctx.JSON(systems)
-	ctx.Next()
 }
 
 /// SETUP-019
@@ -364,7 +346,6 @@ func (stp *SetupController) PostSystemadd(ctx iris.Context) {
 	}
 
 	ctx.JSON("1")
-	ctx.Next()
 }
 
 /// SETUP-020
@@ -380,7 +361,6 @@ func (stp *SetupController) PostSystemset(ctx iris.Context) {
 	}
 
 	ctx.JSON(1)
-	ctx.Next()
 }
 
 /// SETUP-021
@@ -397,7 +377,6 @@ func (stp *SetupController) PostSystemdelete(ctx iris.Context) {
 	}
 
 	ctx.JSON("1")
-	ctx.Next()
 }
 
 /// SETUP-022
@@ -409,7 +388,6 @@ func (stp *SetupController) GetNewsysidcenter(ctx iris.Context) {
 	}
 	s := strconv.Itoa(nid)
 	ctx.Text(s)
-	ctx.Next()
 }
 
 /// SETUP-023
@@ -422,7 +400,6 @@ func (stp *SetupController) GetNewsysid(ctx iris.Context) {
 	}
 	s := strconv.Itoa(nid)
 	ctx.Text(s)
-	ctx.Next()
 }
 
 /// SETUP-024
@@ -436,7 +413,6 @@ func (stp *SetupController) GetMenuget(ctx iris.Context) {
 	}
 
 	ctx.JSON(menus)
-	ctx.Next()
 }
 
 /// SETUP-025
@@ -452,7 +428,6 @@ func (stp *SetupController) PostMenuadd(ctx iris.Context) {
 	}
 
 	ctx.JSON(1)
-	ctx.Next()
 }
 
 /// SETUP-026
@@ -467,7 +442,6 @@ func (stp *SetupController) PostMenuset(ctx iris.Context) {
 		return
 	}
 	ctx.JSON("1")
-	ctx.Next()
 }
 
 /// SETUP-027
@@ -485,7 +459,6 @@ func (stp *SetupController) PostMenumove(ctx iris.Context) {
 	}
 
 	ctx.JSON("1")
-	ctx.Next()
 }
 
 /// SETUP-028
@@ -501,7 +474,6 @@ func (stp *SetupController) PostMenudelete(ctx iris.Context) {
 	}
 
 	ctx.JSON("1")
-	ctx.Next()
 }
 
 /// SETUP-029
@@ -517,7 +489,6 @@ func (stp *SetupController) PostFprightset(ctx iris.Context) {
 	}
 
 	ctx.JSON("1")
-	ctx.Next()
 }
 
 /// SETUP-030
@@ -531,7 +502,6 @@ func (stp *SetupController) GetParams(ctx iris.Context) {
 		return
 	}
 	ctx.JSON(parms)
-	ctx.Next()
 }
 
 /// SETUP-031
@@ -546,7 +516,6 @@ func (stp *SetupController) PostParamset(ctx iris.Context) {
 		return
 	}
 	ctx.Text("1")
-	ctx.Next()
 }
 
 /// SETUP-032
@@ -560,7 +529,6 @@ func (stp *SetupController) GetParamsemp(ctx iris.Context) {
 		return
 	}
 	ctx.JSON(parms)
-	ctx.Next()
 }
 
 /// SETUP-033
@@ -575,6 +543,5 @@ func (stp *SetupController) PostParamempset(ctx iris.Context) {
 		return
 	}
 	ctx.Text("1")
-	ctx.Next()
 }
 

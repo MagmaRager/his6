@@ -30,23 +30,6 @@ func init() {
 //
 //}
 
-/* DEMO
-func (lgn *LoginController) GetDemo(ctx iris.Context) {
-	p1 := ctx.URLParam("p1")
-	//p2, _ := ctx.URLParamInt("p2")
-	p2 := ctx.URLParam("p2")
-	//p4, _ := ctx.URLParamInt("p4")
-	//p5, _ := ctx.URLParamFloat64("p5")
-
-	//database.GetTransactionId("")
-	tx, _ := database.OraDb.BeginTx()
-	database.Do(*tx, "INSERT INTO CD_KIND(CODE, NAME) VALUES (:1, :2)", p1, p2)
-
-	ctx.Next()
-}
-*/
-
-
 /// SYS-001
 /// /sys/date
 func (lgn *LoginController) GetDate(ctx iris.Context) {
@@ -58,7 +41,6 @@ func (lgn *LoginController) GetDate(ctx iris.Context) {
 	}
 
 	ctx.Text(now.String())
-	ctx.Next()
 }
 
 /// SYS-002
@@ -74,7 +56,6 @@ func (lgn *LoginController) PostLogin(ctx iris.Context) {
 	//}
 	s := strconv.Itoa(status)
 	ctx.Text(s)
-	ctx.Next()
 }
 
 /// SYS-003
@@ -89,7 +70,6 @@ func (lgn *LoginController) GetBranch(ctx iris.Context) {
 		return
 	}
 	ctx.JSON(branch)
-	ctx.Next()
 }
 
 /// SYS-004
@@ -105,7 +85,6 @@ func (lgn *LoginController) GetSystem(ctx iris.Context) {
 	}
 
 	ctx.JSON(systems)
-	ctx.Next()
 }
 
 /// SYS-005
@@ -121,7 +100,6 @@ func (lgn *LoginController) GetEmpid(ctx iris.Context) {
 	}
 	s := strconv.Itoa(empId)
 	ctx.Text(s)
-	ctx.Next()
 }
 
 /// SYS-006
@@ -137,5 +115,4 @@ func (lgn *LoginController) GetSystemdefault(ctx iris.Context) {
 	} else {
 		ctx.Text("")
 	}
-	ctx.Next()
 }

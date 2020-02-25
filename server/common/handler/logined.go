@@ -106,7 +106,6 @@ func (lgn *LoginedController) GetEmpinfo(ctx iris.Context) {
 	}
 
 	ctx.JSON(empInfo)
-	ctx.Next()
 }
 
 /// SYS-012
@@ -122,7 +121,6 @@ func (lgn *LoginedController) GetRole(ctx iris.Context) {
 	}
 
 	ctx.JSON(roles)
-	ctx.Next()
 }
 
 /// SYS-013
@@ -138,7 +136,6 @@ func (lgn *LoginedController) GetAction(ctx iris.Context) {
 	}
 
 	ctx.JSON(actions)
-	ctx.Next()
 }
 
 /// SYS-014
@@ -156,5 +153,4 @@ func (lgn *LoginedController) GetMenu(ctx iris.Context) {
 	}
 
 	ctx.JSON(menus)
-	ctx.Next()
 }
