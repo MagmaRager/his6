@@ -33,7 +33,11 @@ func (dao *SetupDao) SetNewPsw(empId int, psw string) error {
 		err = errors.New("用户不存在！" + err.Error())
 		return err
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("SetNewPsw提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -62,7 +66,7 @@ func (dao *SetupDao) GetFp(empId int, fpCode, roles string) (model.CdObjectFp, e
 func (dao *SetupDao) GetModule() ([]model.CdModule, error) {
 	sql := "SELECT CODE, NAME, FILE_NAME, VERSION, USED_FLAG, DESCRIBE, FILE_TIME " +
 		"FROM CD_MODULE ORDER BY CODE"
-	var modules = []model.CdModule{}
+	var modules []model.CdModule
 
 	err := database.OraDb.Query(&modules, sql)
 	if err != nil {
@@ -77,7 +81,7 @@ func (dao *SetupDao) GetObject() ([]model.CdObject, error) {
 	sql := "SELECT CODE, NAME, OBJECT, MODULE_CODE, USED_FLAG, " +
 		"IS_FUNCTION, HAS_FUNCTION_POINT, DESCRIBE " +
 		"FROM CD_OBJECT WHERE USED_FLAG = 1 ORDER BY MODULE_CODE, CODE"
-	var objects = []model.CdObject{}
+	var objects []model.CdObject
 
 	err := database.OraDb.Query(&objects, sql)
 	if err != nil {
@@ -99,7 +103,7 @@ func (dao *SetupDao) AddModule(m model.CdModule, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增模块。" + err.Error())
+		err = errors.New("未成功新增模块。")
 		return err
 	}
 	return nil
@@ -118,7 +122,7 @@ func (dao *SetupDao) AddObject(o model.CdObject, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增对象。" + err.Error())
+		err = errors.New("未成功新增对象。")
 		return err
 	}
 
@@ -136,10 +140,14 @@ func (dao *SetupDao) SetModule(m model.CdModule) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增模块。" + err.Error())
+		err = errors.New("未成功新增模块。")
 		return err
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("SetModule提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -154,10 +162,14 @@ func (dao *SetupDao) SetObject(o model.CdObject) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增模块。" + err.Error())
+		err = errors.New("未成功新增模块。")
 		return err
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("SetObject提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -172,7 +184,7 @@ func (dao *SetupDao) AddObjectFp(fp model.CdObjectFp, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增功能点。" + err.Error())
+		err = errors.New("未成功新增功能点。")
 		return err
 	}
 
@@ -183,7 +195,7 @@ func (dao *SetupDao) AddObjectFp(fp model.CdObjectFp, tx database.Tx) error {
 func (dao *SetupDao) GetFpList(ocode string) ([]model.CdObjectFp, error) {
 	sql := "SELECT CODE, NAME, OBJECT_CODE, DESCRIBE FROM CD_OBJECT_FP " +
 		"WHERE OBJECT_CODE = :1"
-	var fps = []model.CdObjectFp{}
+	var fps []model.CdObjectFp
 
 	err := database.OraDb.Query(&fps, sql, ocode)
 	if err != nil {
@@ -199,7 +211,7 @@ func (dao *SetupDao) GetFpRole(fpCode string) ([]model.BdRole, error) {
 		"FROM BD_ROLE WHERE STATE = 1 AND ID IN " +
 		"(SELECT ROLE_ID FROM BD_OBJECT_FP_ROLE WHERE FP_CODE = :1) " +
 		"ORDER BY CODE"
-	var roles = []model.BdRole{}
+	var roles []model.BdRole
 
 	err := database.OraDb.Query(&roles, sql, fpCode)
 	if err != nil {
@@ -216,7 +228,7 @@ func (dao *SetupDao) GetFpEmp(fpCode string) ([]model.BdEmp, error) {
 		"FROM BD_EMP WHERE STATE = 1 AND ID IN " +
 		"(SELECT EMP_ID FROM BD_OBJECT_FP_EMP WHERE FP_CODE = :1) " +
 		"ORDER BY CODE"
-	var emps = []model.BdEmp{}
+	var emps []model.BdEmp
 
 	err := database.OraDb.Query(&emps, sql, fpCode)
 	if err != nil {
@@ -231,7 +243,7 @@ func (dao *SetupDao) GetRoleByBranch(branchId int) ([]model.BdRole, error) {
 	sql := "SELECT ID, CODE, NAME, INPUTCODE1, INPUTCODE2, STATE, IS_LEAF, DESCRIBE " +
 		"FROM BD_ROLE WHERE STATE = 1 AND TRUNC(ID, -3) / 1000 = :1 " +
 		"ORDER BY CODE"
-	var roles = []model.BdRole{}
+	var roles []model.BdRole
 
 	err := database.OraDb.Query(&roles, sql, branchId)
 	if err != nil {
@@ -247,7 +259,7 @@ func (dao *SetupDao) GetEmp(branchId int) ([]model.DataEmpDir, error) {
 		"(SELECT NAME FROM BD_DEPT WHERE ID = BD_EMP.DEPT_ID) AS DEPT_NAME " +
 		"FROM BD_EMP WHERE STATE = 1 AND TRUNC(ID, -3) / 1000 = :1 AND STATE = 1 " +
 		"ORDER BY CODE"
-	var emps = []model.DataEmpDir{}
+	var emps []model.DataEmpDir
 
 	err := database.OraDb.Query(&emps, sql, branchId)
 	if err != nil {
@@ -263,7 +275,7 @@ func (dao *SetupDao) GetSysRoleHandle(systemId int) ([]model.BdRole, error) {
 		"FROM BD_ROLE WHERE ID IN " +
 		"(SELECT ROLE_ID FROM BD_SYSTEM_ROLE WHERE SYSTEM_ID = :1) " +
 		"ORDER BY CODE"
-	var roles = []model.BdRole{}
+	var roles []model.BdRole
 
 	err := database.OraDb.Query(&roles, sql, systemId)
 	if err != nil {
@@ -280,7 +292,7 @@ func (dao *SetupDao) GetSysEmpHandle(systemId int) ([]model.DataEmpDir, error) {
 		"FROM BD_EMP WHERE ID IN " +
 		"(SELECT EMP_ID FROM BD_SYSTEM_EMP WHERE SYSTEM_ID = :1) " +
 		"ORDER BY CODE"
-	var emps = []model.DataEmpDir{}
+	var emps []model.DataEmpDir
 
 	err := database.OraDb.Query(&emps, sql, systemId)
 	if err != nil {
@@ -296,7 +308,7 @@ func (dao *SetupDao) GetMenuRoleHandle(menuCode string) ([]model.BdRole, error) 
 		"FROM BD_ROLE WHERE ID IN " +
 		"(SELECT ROLE_ID FROM BD_MENU_ROLE WHERE MENU_CODE = :1) " +
 		"ORDER BY CODE"
-	var roles = []model.BdRole{}
+	var roles []model.BdRole
 
 	err := database.OraDb.Query(&roles, sql, menuCode)
 	if err != nil {
@@ -313,7 +325,7 @@ func (dao *SetupDao) GetMenuEmpHandle(menuCode string) ([]model.DataEmpDir, erro
 		"FROM BD_EMP WHERE ID IN " +
 		"(SELECT EMP_ID FROM BD_MENU_EMP WHERE MENU_CODE = :1) " +
 		"ORDER BY CODE"
-	var emps = []model.DataEmpDir{}
+	var emps []model.DataEmpDir
 
 	err := database.OraDb.Query(&emps, sql, menuCode)
 	if err != nil {
@@ -326,7 +338,7 @@ func (dao *SetupDao) GetMenuEmpHandle(menuCode string) ([]model.DataEmpDir, erro
 //GetSystem service
 func (dao *SetupDao) GetSystem() ([]model.BdSystem, error) {
 	sql := "SELECT ID, CODE, NAME, ICO FROM BD_SYSTEM ORDER BY ID"
-	var systems = []model.BdSystem{}
+	var systems []model.BdSystem
 
 	err := database.OraDb.Query(&systems, sql)
 	if err != nil {
@@ -347,7 +359,7 @@ func (dao *SetupDao) AddSystem(s model.BdSystem, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增系统。" + err.Error())
+		err = errors.New("未成功新增系统。")
 		return err
 	}
 
@@ -364,7 +376,7 @@ func (dao *SetupDao) SetSystem(s model.BdSystem, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功设置系统。" + err.Error())
+		err = errors.New("未成功设置系统。")
 		return err
 	}
 
@@ -381,7 +393,7 @@ func (dao *SetupDao) DeleteSystem(sid int, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功删除系统角色。" + err.Error())
+		err = errors.New("未成功删除系统角色。")
 		return err
 	}
 
@@ -399,7 +411,7 @@ func (dao *SetupDao) AddSystemRole(sid, rid int, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增系统角色。" + err.Error())
+		err = errors.New("未成功新增系统角色。")
 		return err
 	}
 
@@ -417,7 +429,7 @@ func (dao *SetupDao) AddSystemEmp(sid, eid int, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增系统人员。" + err.Error())
+		err = errors.New("未成功新增系统人员。")
 		return err
 	}
 
@@ -461,7 +473,7 @@ func (dao *SetupDao) NewSysIdCenter() (int, error) {
 		return -1, err
 	}
 	if maxid == 9999 {
-		err = errors.New("子系统序列号溢出。" + err.Error())
+		err = errors.New("子系统序列号溢出。")
 		return -2, err
 	}
 	return maxid + 1, nil
@@ -478,7 +490,7 @@ func (dao *SetupDao) NewSysId(branchId int) (int, error) {
 		return -1, err
 	}
 	if maxid - (branchId * 10000) == 9999 {
-		err = errors.New("子系统序列号溢出。" + err.Error())
+		err = errors.New("子系统序列号溢出。")
 		return -2, err
 	}
 	return maxid + 1, nil
@@ -488,7 +500,7 @@ func (dao *SetupDao) NewSysId(branchId int) (int, error) {
 func (dao *SetupDao) GetAllMenu() ([]model.BdMenu, error) {
 	sql := "SELECT SYSTEM_ID, CODE, TITLE, OBJECT_CODE, PARAMETER, WIN_STATE, ICO, PROMPT " +
 		"FROM BD_MENU ORDER BY SYSTEM_ID, CODE"
-	var menus = []model.BdMenu{}
+	var menus []model.BdMenu
 
 	err := database.OraDb.Query(&menus, sql)
 	if err != nil {
@@ -511,7 +523,7 @@ func (dao *SetupDao) AddMenu(s model.BdMenu, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增菜单。" + err.Error())
+		err = errors.New("未成功新增菜单。")
 		return err
 	}
 
@@ -529,7 +541,7 @@ func (dao *SetupDao) SetMenu(m model.BdMenu, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功设置菜单。" + err.Error())
+		err = errors.New("未成功设置菜单。")
 		return err
 	}
 
@@ -547,7 +559,7 @@ func (dao *SetupDao) MoveMenu(os, ns int, om, nm string, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功设置菜单。" + err.Error())
+		err = errors.New("未成功设置菜单。")
 		return err
 	}
 
@@ -564,7 +576,7 @@ func (dao *SetupDao) DeleteMenu(sid int, mcode string, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功删除系统角色。" + err.Error())
+		err = errors.New("未成功删除系统角色。")
 		return err
 	}
 
@@ -582,7 +594,7 @@ func (dao *SetupDao) AddMenuRole(sid, rid int, mcode string, tx database.Tx) err
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增菜单角色。" + err.Error())
+		err = errors.New("未成功新增菜单角色。")
 		return err
 	}
 
@@ -600,7 +612,7 @@ func (dao *SetupDao) AddMenuEmp(sid, eid int, mcode string, tx database.Tx) erro
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增菜单人员。" + err.Error())
+		err = errors.New("未成功新增菜单人员。")
 		return err
 	}
 
@@ -671,7 +683,7 @@ func (dao *SetupDao) AddFpRole(fpCode string, rid int, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增菜单角色。" + err.Error())
+		err = errors.New("未成功新增菜单角色。")
 		return err
 	}
 
@@ -688,7 +700,7 @@ func (dao *SetupDao) AddFpEmp(fpCode string, eid int, tx database.Tx) error {
 		return err
 	}
 	if rst != 1 {
-		err = errors.New("未成功新增菜单人员。" + err.Error())
+		err = errors.New("未成功新增菜单人员。")
 		return err
 	}
 
@@ -725,7 +737,7 @@ func (dao *SetupDao) DeleteFpEmp(fpCode string, tx database.Tx) error {
 func (dao *SetupDao) GetParams(branchId int) ([]model.BdParam, error) {
 	sql := "SELECT BRANCH_ID, NAME, VALUE, NAME_CHN, DESCRIBE FROM BD_PARAMETER " +
 		"WHERE BRANCH_ID = :1"
-	var parms = []model.BdParam{}
+	var parms []model.BdParam
 
 	err := database.OraDb.Query(&parms, sql, branchId)
 	if err != nil {
@@ -754,7 +766,7 @@ func (dao *SetupDao) SetParam(parm model.BdParam) error {
 func (dao *SetupDao) GetParamsEmp(empId int) ([]model.BdParamEmp, error) {
 	sql := "SELECT EMP_ID, NAME, VALUE, NAME_CHN, DESCRIBE FROM BD_PARAMETER_EMP " +
 		"WHERE EMP_ID = :1"
-	var parms = []model.BdParamEmp{}
+	var parms []model.BdParamEmp
 
 	err := database.OraDb.Query(&parms, sql, empId)
 	if err != nil {

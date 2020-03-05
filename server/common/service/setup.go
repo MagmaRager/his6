@@ -13,15 +13,15 @@ type SetupService struct {
 }
 
 //SetNewPsw service
-func (ls *SetupService) SetNewPsw(empId int, opsw, npsw string) (int, error) {
-	psw, err := ls.setupDao.GetPsw(empId)
+func (ss *SetupService) SetNewPsw(empId int, opsw, npsw string) (int, error) {
+	psw, err := ss.setupDao.GetPsw(empId)
 	if err != nil {
 		return -1, err
 	}
 	if psw != opsw {
 		return -2, errors.New("原密码验证失败！")
 	}
-	err = ls.setupDao.SetNewPsw(empId, npsw)
+	err = ss.setupDao.SetNewPsw(empId, npsw)
 	if err != nil {
 		return -1, err
 	}
@@ -70,7 +70,11 @@ func (ss *SetupService) AddModule(module model.CdModule, objects []model.CdObjec
 			}
 		}
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("AddModule提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -189,7 +193,11 @@ func (ss *SetupService) AddSystem(system model.SystemWithRight) error {
 			return err
 		}
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("AddSystem提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -232,7 +240,11 @@ func (ss *SetupService) SetSystem(system model.SystemWithRight) error {
 			return err
 		}
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("SetSystem提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -255,8 +267,11 @@ func (ss *SetupService) DeleteSystem(systemId int) error {
 		tx.Rollback()
 		return err
 	}
-
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("DeleteSystem提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -305,7 +320,11 @@ func (ss *SetupService) AddMenu(menu model.MenuWithRight) error {
 			return err
 		}
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("AddMenu提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -349,7 +368,11 @@ func (ss *SetupService) SetMenu(menu model.MenuWithRight) error {
 			return err
 		}
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("SetMenu提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -371,11 +394,15 @@ func (ss *SetupService) MoveMenu(os, ns int, om, nm string) error {
 		tx.Rollback()
 		return err
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("MoveMenu提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
-//DeleteSystem service
+//DeleteMenu service
 func (ss *SetupService) DeleteMenu(systemId int, menuCode string) error {
 	tx, _ := database.OraDb.BeginTx()
 
@@ -394,8 +421,11 @@ func (ss *SetupService) DeleteMenu(systemId int, menuCode string) error {
 		tx.Rollback()
 		return err
 	}
-
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("DeleteMenu提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -432,7 +462,11 @@ func (ss *SetupService) SetFpRight(fp model.FpWithRight) error {
 			return err
 		}
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("SetFpRight提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -442,8 +476,8 @@ func (ss *SetupService) GetParams(branchId int) ([]model.BdParam, error) {
 }
 
 //SetParam service
-func (ss *SetupService) SetParam(parm model.BdParam) error {
-	return ss.setupDao.SetParam(parm)
+func (ss *SetupService) SetParam(param model.BdParam) error {
+	return ss.setupDao.SetParam(param)
 }
 
 //GetParamsEmp service
@@ -452,7 +486,7 @@ func (ss *SetupService) GetParamsEmp(empId int) ([]model.BdParamEmp, error) {
 }
 
 //SetParamEmp service
-func (ss *SetupService) SetParamEmp(parm model.BdParamEmp) error {
-	return ss.setupDao.SetParamEmp(parm)
+func (ss *SetupService) SetParamEmp(param model.BdParamEmp) error {
+	return ss.setupDao.SetParamEmp(param)
 }
 

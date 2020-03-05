@@ -75,8 +75,8 @@ func (ls *LoginService) SetParamEmp(empId int, parmName, value string) error {
 }
 
 //Login service
-func (ls *LoginService) Login(empCode, password, ip string) (int, error) {
-	return ls.sysDao.Login(empCode, password, ip)
+func (ls *LoginService) Login(empCode, password string) (int, error) {
+	return ls.sysDao.Login(empCode, password)
 }
 
 //GetEmpInfo service

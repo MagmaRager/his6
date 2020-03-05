@@ -143,7 +143,7 @@ func (stp *SetupController) PostModuleadd(ctx iris.Context) {
 /// SETUP-006
 /// /setup/objectadd
 func (stp *SetupController) PostObjectadd(ctx iris.Context) {
-	var ety = []model.CdObject{}
+	var ety []model.CdObject
 	_ = ctx.ReadJSON(&ety)
 
 	err := setup.AddObject(ety)

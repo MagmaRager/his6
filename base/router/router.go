@@ -36,10 +36,8 @@ func init() {
 	App = iris.New()
 
 	p := pprof.New()
-	longQueryTime = config.GetConfigDuration("logs", "long_query_time",
-		time.Duration(5*time.Second)).Seconds()
-
-	RegisterGetHandler("/check", checkHandler)
+	longQueryTime = config.GetConfigDuration("logs",
+		"long_query_time", 5 * time.Second).Seconds()
 
 	App.Any("/debug/pprof", p)
 	App.Any("/debug/pprof/{action:path}", p)
@@ -57,7 +55,7 @@ func before(ctx iris.Context) {
 	et := time.Now()
 	bt := et.Sub(st).Seconds()
 
-	url := ctx.Request().RequestURI
+	url := ctx.GetCurrentRoute().Path()
 	method := ctx.Request().Method
 	status := ctx.GetStatusCode()
 
@@ -70,7 +68,7 @@ func before(ctx iris.Context) {
 			bucketFail(b)
 		}
 	} else {
-		err := errors.New("监视错误：url桶未定义！")
+		err := errors.New("监视错误：url[" + url + "]未定义！")
 		fmt.Println(err)
 	}
 
@@ -121,6 +119,7 @@ func before(ctx iris.Context) {
 //	}
 //}
 
+//find 获取url桶
 func find(url, method string) *UrlBucket {
 	for _, b := range urlBuckets {
 		if b.url == url && b.method == method {

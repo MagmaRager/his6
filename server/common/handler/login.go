@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/kataras/iris"
+	"his6/base/middle/jwt"
 	"his6/base/router"
 	"his6/server/common/model"
 	"his6/server/common/service"
@@ -49,12 +50,23 @@ func (lgn *LoginController) PostLogin(ctx iris.Context) {
 	var ety = model.LoginInput{}
 	_ = ctx.ReadForm(&ety)
 
-	status, _ := login.Login(ety.EmpCode, ety.Password, ety.Ip)
-	//if err != nil {
-	//	ctx.StatusCode(iris.StatusInternalServerError)
-	//	return
-	//}
+	status, _ := login.Login(ety.EmpCode, ety.Password)
 	s := strconv.Itoa(status)
+
+	// 新的JWT token
+	empId, _ := login.GetEmpid(ety.EmpCode)
+	actions, _ := logined.GetAction(empId)
+	var autStr string
+	for _, action := range actions {
+		autStr += action.Code
+		autStr += " "
+	}
+	autStr = autStr[0:len(autStr) - 1]
+
+	jwtInfo := jwt.CreateToken(ety.BranchCode, strconv.Itoa(empId), ety.Ip, "PSW LOGIN", autStr)
+	tokenNew, _ := jwtInfo.GenToken()
+	ctx.Header(jwt.GetName(), tokenNew)
+
 	ctx.Text(s)
 }
 

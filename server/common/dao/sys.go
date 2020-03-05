@@ -14,7 +14,7 @@ type SysDao struct {
 //Sysdate service
 func (dao *SysDao) Sysdate() (time.Time, error) {
 	sql := "SELECT SYSDATE FROM DUAL"
-	var sysdate time.Time = time.Time{}
+	var sysdate = time.Time{}
 
 	err := database.OraDb.Find(&sysdate, sql)
 	if err != nil {
@@ -58,7 +58,7 @@ func (dao *SysDao) GetSystemEmp(empId int) ([]model.BdSystem, error) {
 		"(SELECT SYSTEM_ID FROM BD_SYSTEM_ROLE WHERE ROLE_ID IN " +
 		"(SELECT ROLE_ID FROM BD_ROLE_EMP WHERE EMP_ID = :1)) " +
 		"ORDER BY ID"
-	var systems = []model.BdSystem{}
+	var systems []model.BdSystem
 
 	err := database.OraDb.Query(&systems, sql, empId)
 	if err != nil {
@@ -71,14 +71,14 @@ func (dao *SysDao) GetSystemEmp(empId int) ([]model.BdSystem, error) {
 //GetParam service
 func (dao *SysDao) GetParam(branchId int, parmName string) (database.NullableString, error) {
 	sql := "SELECT VALUE FROM BD_PARAMETER WHERE BRANCH_ID = :1 AND NAME = :2"
-	var parmVal database.NullableString = database.NullableString{}
+	var paramVal = database.NullableString{}
 
-	err := database.OraDb.Find(&parmVal, sql, branchId, parmName)
+	err := database.OraDb.Find(&paramVal, sql, branchId, parmName)
 	if err != nil {
 		err = errors.New("无对应参数值。" + err.Error())
-		return parmVal, err
+		return paramVal, err
 	}
-	return parmVal, nil
+	return paramVal, nil
 }
 
 //SetParam service
@@ -97,7 +97,11 @@ func (dao *SysDao) SetParam(branchId int, parmName, value string) (int, error) {
 		tx.Rollback()
 		return 0, nil
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("SetParam提交失败！" + err.Error())
+		return -2, err
+	}
 	return 1, nil
 }
 
@@ -113,21 +117,25 @@ func (dao *SysDao) AddParam(branchId int, parmName, value string) error {
 		tx.Rollback()
 		return err
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("AddParam提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
 //GetParamEmp service
 func (dao *SysDao) GetParamEmp(empId int, parmName string) (database.NullableString, error) {
 	sql := "SELECT VALUE FROM BD_PARAMETER_EMP WHERE EMP_ID = :1 AND NAME = :2"
-	var parmVal database.NullableString = database.NullableString{}
+	var paramVal = database.NullableString{}
 
-	err := database.OraDb.Find(&parmVal, sql, empId, parmName)
+	err := database.OraDb.Find(&paramVal, sql, empId, parmName)
 	if err != nil {
 		err = errors.New("无对应参数值。" + err.Error())
-		return parmVal, err
+		return paramVal, err
 	}
-	return parmVal, nil
+	return paramVal, nil
 }
 
 //SetParamEmp service
@@ -146,7 +154,11 @@ func (dao *SysDao) SetParamEmp(empId int, parmName, value string) (int, error) {
 		tx.Rollback()
 		return 0, nil
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("SetParamEmp提交失败！" + err.Error())
+		return -2, err
+	}
 	return 1, nil
 }
 
@@ -162,12 +174,16 @@ func (dao *SysDao) AddParamEmp(empId int, parmName, value string) error {
 		tx.Rollback()
 		return err
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = errors.New("AddParamEmp提交失败！" + err.Error())
+		return err
+	}
 	return nil
 }
 
 //Login service
-func (dao *SysDao) Login(empCode, password, ip string) (int, error) {
+func (dao *SysDao) Login(empCode, password string) (int, error) {
 	sql := "SELECT ID, PASSWORD FROM BD_EMP WHERE CODE = :1 AND STATE = 1"
 	var info = model.LoginInfo{}
 
@@ -206,7 +222,7 @@ func (dao *SysDao) GetEmpInfo(empId int) (model.EmpInfo, error) {
 func (dao *SysDao) GetRoleEmp(empId int) ([]string, error) {
 	sql := "SELECT CODE FROM BD_ROLE WHERE ID IN " +
 		"(SELECT ROLE_ID FROM BD_ROLE_EMP WHERE EMP_ID = :1) AND STATE = 1"
-	var roles = []string{}
+	var roles []string
 
 	err := database.OraDb.Query(&roles, sql, empId)
 	if err != nil {
@@ -223,7 +239,7 @@ func (dao *SysDao) GetAction(empId int) ([]model.Action, error) {
 		"DECODE(EXPIRY_TIME, NULL, '', TO_CHAR(EXPIRY_TIME,'YYYY-MM-DD HH24:MI:SS')) AS EXPIRY_TIME " +
 		"FROM BD_ACTION_ROLE_EMP " +
 		"WHERE EMP_ID = :1 AND (EXPIRY_TIME IS NULL OR EXPIRY_TIME > SYSDATE)"
-	var actions = []model.Action{}
+	var actions []model.Action
 
 	err := database.OraDb.Query(&actions, sql, empId)
 	if err != nil {
@@ -250,7 +266,7 @@ func (dao *SysDao) GetMenuEmp(empId, systemID int, roles string) ([]model.DataMe
 		"(SELECT MENU_CODE FROM BD_MENU_ROLE WHERE SYSTEM_ID = :2 AND ROLE_ID IN " +
 		"(SELECT ID FROM BD_ROLE WHERE ' ' || :3 || ' ' LIKE '% ' || CODE || ' %')) " +
 		"ORDER BY M.CODE"
-	var menus = []model.DataMenu{}
+	var menus []model.DataMenu
 
 	err := database.OraDb.Query(&menus, sql, systemID, empId, systemID, roles)
 	if err != nil {

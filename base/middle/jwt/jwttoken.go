@@ -17,6 +17,8 @@ var (
 	key []byte
 	//  jwt有效时间秒数
 	expiresDuration int64
+	//
+	excludeUrlPattern []string
 	//  JWT名称
 	name string
 )
@@ -38,18 +40,20 @@ type Info struct {
 	branchId string
 	// 人员
 	empId string
-	// 登录路径
 	// IP
 	loginIp string
+	// 权限列表串
+	authString string
 }
 
-//  产生JWT
-func CreateToken(brc, emp, ip, lgw string) Info {
+//  产生JWT信息实体
+func CreateToken(brc, emp, ip, lgw, aut string) Info {
 	return Info{
 		branchId: brc,
 		empId:    emp,
 		loginIp:  ip,
 		loginWay: lgw,
+		authString: aut,
 	}
 }
 
@@ -61,6 +65,20 @@ func GetName() string {
 //  获取IP地址
 func (info Info) GetIp() string {
 	return info.loginIp
+}
+
+//  获取权限列表
+func (info Info) GetAuth() string {
+	return info.authString
+}
+
+//  获取权限列表
+func (info Info) ToString() string {
+	s := "[机构:" + info.branchId + " "
+	s += "人员ID:" + info.empId + " "
+	s += "IP地址:" + info.loginIp + " "
+	s += "拥有权限:" + info.authString + "]"
+	return s
 }
 
 //  获取客户端IP
@@ -95,8 +113,9 @@ func (info Info) GenToken() (string, error) {
 		"emp": info.empId,
 		"lgw": info.loginWay,
 		"ip":  info.loginIp,
-		"exp": int64(time.Now().Unix() + expiresDuration),
+		"exp": time.Now().Unix() + expiresDuration,
 		"iat": time.Now().Unix(),
+		"aut": info.authString,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -108,18 +127,22 @@ func CheckToken(token string) (Info, error) {
 	t, err := jwt.Parse(token, func(*jwt.Token) (interface{}, error) {
 		return key, nil
 	})
-
 	jt := Info{}
-
 	if err != nil {
 		return jt, err
 	}
 
 	mt := (t.Claims).(jwt.MapClaims)
+	//if time.Now().Unix() > int64(mt["exp"].(float64) * math.Pow10(0)) {
+	//	err = errors.New("token已经过期")
+	//	return jt, err
+	//}
+	jt.authString = mt["aut"].(string)
 	jt.branchId = mt["brc"].(string)
 	jt.empId = mt["emp"].(string)
 	jt.loginWay = mt["lgw"].(string)
 	jt.loginIp = mt["ip"].(string)
+
 
 	return jt, err
 }
