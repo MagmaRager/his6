@@ -12,10 +12,12 @@ import (
 var (
 	// 慢查询秒数
 	//longQueryTime float64
+
 	// url权限列表
 	urlAuthList map[string]string
 )
 
+// url的权限记录
 type UrlAuthOrigin struct {
 	Url string
 	Method string
@@ -29,11 +31,13 @@ func init() {
 	//router.App.Done(after)
 }
 
+//从数据库（中心）中获取url权限
 func getUrlAuth() map[string]string {
 	sql := "SELECT URL, METHOD, AUTH_LIST FROM CD_URL_AUTH"
 	var lst []UrlAuthOrigin
 
-	err := database.OraDb.Query(&lst, sql)
+	var c iris.Context
+	err := database.OraDb.Query(c, &lst, sql)
 	if err != nil {
 		return nil
 	}
@@ -46,8 +50,12 @@ func getUrlAuth() map[string]string {
 	return uam
 }
 
-//  调用前处理，验证JWT权限
+// 调用前处理，验证url权限、JWT认证合法性和权限
 func before(ctx iris.Context) {
+	sqlmHeader := ctx.GetHeader("SQLM")
+	ctx.Values().Set("SQLM", sqlmHeader)
+
+	//region url验证
 	aul := urlAuthList[ctx.GetCurrentRoute().Name()]
 	if hasAllAuth(aul) {
 		ctx.Next()
@@ -73,12 +81,13 @@ func before(ctx iris.Context) {
 			}
 		}
 	}
+	//endregion
 
-	//  jwt认证处理
-	s := ctx.GetHeader(jwt.GetName())
-	token, err := jwt.CheckToken(s)
+	//region  jwt认证处理
+	jwts := ctx.GetHeader(jwt.GetName())
+	token, err := jwt.CheckToken(jwts)
 	if err != nil {
-		logs.Error("JWT认证不成功: " + err.Error())
+		logs.Error("JWT认证不成功: [" + ctx.GetCurrentRoute().Name() + "]" + err.Error())
 		if err.Error() == "Token is expired"{
 			ctx.StatusCode(iris.StatusPreconditionFailed)
 		} else {
@@ -115,8 +124,10 @@ func before(ctx iris.Context) {
 	// 找不到可用权限
 	logs.Error("没有url[" + ctx.GetCurrentRoute().Path() + "]的权限！")
 	ctx.StatusCode(iris.StatusUnauthorized)
-}
+	//endregion
 
+}
+// 若具有所有url权限(**)，则返回true
 func hasAllAuth(aul string) bool {
 	return strings.Index(aul, "**") >= 0
 }

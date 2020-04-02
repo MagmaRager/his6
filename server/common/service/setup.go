@@ -2,26 +2,32 @@ package service
 
 import (
 	"errors"
+	"github.com/kataras/iris"
 	"his6/base/database"
 	"his6/server/common/dao"
 	"his6/server/common/model"
 )
 
-//SetupService Service Struct
-type SetupService struct {
-	setupDao dao.SetupDao
+//setupService Service Struct
+type setupService struct {
+	ctx iris.Context
+	//setupDao dao.setupDao
+}
+
+func NewSetup(c iris.Context) *setupService {
+	return &setupService{ctx: c}
 }
 
 //SetNewPsw service
-func (ss *SetupService) SetNewPsw(empId int, opsw, npsw string) (int, error) {
-	psw, err := ss.setupDao.GetPsw(empId)
+func (ss *setupService) SetNewPsw(empId int, opsw, npsw string) (int, error) {
+	psw, err := dao.NewSetup(ss.ctx).GetPsw(empId)
 	if err != nil {
 		return -1, err
 	}
 	if psw != opsw {
 		return -2, errors.New("原密码验证失败！")
 	}
-	err = ss.setupDao.SetNewPsw(empId, npsw)
+	err = dao.NewSetup(ss.ctx).SetNewPsw(empId, npsw)
 	if err != nil {
 		return -1, err
 	}
@@ -29,24 +35,24 @@ func (ss *SetupService) SetNewPsw(empId int, opsw, npsw string) (int, error) {
 }
 
 //GetFp service
-func (ss *SetupService) GetFp(empId int, fpCode, roles string) (model.CdObjectFp, error) {
-	return ss.setupDao.GetFp(empId, fpCode, roles)
+func (ss *setupService) GetFp(empId int, fpCode, roles string) (model.CdObjectFp, error) {
+	return dao.NewSetup(ss.ctx).GetFp(empId, fpCode, roles)
 }
 
 //GetModule service
-func (ss *SetupService) GetModule() ([]model.CdModule, error) {
-	return ss.setupDao.GetModule()
+func (ss *setupService) GetModule() ([]model.CdModule, error) {
+	return dao.NewSetup(ss.ctx).GetModule()
 }
 
 //GetObject service
-func (ss *SetupService) GetObject() ([]model.CdObject, error) {
-	return ss.setupDao.GetObject()
+func (ss *setupService) GetObject() ([]model.CdObject, error) {
+	return dao.NewSetup(ss.ctx).GetObject()
 }
 
 //AddModule service
-func (ss *SetupService) AddModule(module model.CdModule, objects []model.CdObject) error {
+func (ss *setupService) AddModule(module model.CdModule, objects []model.CdObject) error {
 	tx, _ := database.OraDb.BeginTx()
-	err := ss.setupDao.AddModule(module, *tx)
+	err := dao.NewSetup(ss.ctx).AddModule(module, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -54,7 +60,7 @@ func (ss *SetupService) AddModule(module model.CdModule, objects []model.CdObjec
 	i := 0
 	for ; i < len(objects); i++ {
 		o := objects[i]
-		err := ss.setupDao.AddObject(o, *tx)
+		err := dao.NewSetup(ss.ctx).AddObject(o, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -63,7 +69,7 @@ func (ss *SetupService) AddModule(module model.CdModule, objects []model.CdObjec
 		j := 0
 		for ; j < len(fps); j++ {
 			fp := fps[j]
-			err := ss.setupDao.AddObjectFp(fp, *tx)
+			err := dao.NewSetup(ss.ctx).AddObjectFp(fp, *tx)
 			if err != nil {
 				tx.Rollback()
 				return err
@@ -79,12 +85,12 @@ func (ss *SetupService) AddModule(module model.CdModule, objects []model.CdObjec
 }
 
 //AddObject service
-func (ss *SetupService) AddObject(objects []model.CdObject) error {
+func (ss *setupService) AddObject(objects []model.CdObject) error {
 	tx, _ := database.OraDb.BeginTx()
 	i := 0
 	for ; i < len(objects); i++ {
 		o := objects[i]
-		err := ss.setupDao.AddObject(o, *tx)
+		err := dao.NewSetup(ss.ctx).AddObject(o, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -93,7 +99,7 @@ func (ss *SetupService) AddObject(objects []model.CdObject) error {
 		j := 0
 		for ; j < len(fps); j++ {
 			fp := fps[j]
-			err := ss.setupDao.AddObjectFp(fp, *tx)
+			err := dao.NewSetup(ss.ctx).AddObjectFp(fp, *tx)
 			if err != nil {
 				tx.Rollback()
 				return err
@@ -105,72 +111,72 @@ func (ss *SetupService) AddObject(objects []model.CdObject) error {
 }
 
 //SetModule service
-func (ss *SetupService) SetModule(module model.CdModule) error {
-	return ss.setupDao.SetModule(module)
+func (ss *setupService) SetModule(module model.CdModule) error {
+	return dao.NewSetup(ss.ctx).SetModule(module)
 }
 
 //SetObject service
-func (ss *SetupService) SetObject(object model.CdObject) error {
-	return ss.setupDao.SetObject(object)
+func (ss *setupService) SetObject(object model.CdObject) error {
+	return dao.NewSetup(ss.ctx).SetObject(object)
 }
 
 //GetFpList service
-func (ss *SetupService) GetFpList(objectCode string) ([]model.CdObjectFp, error) {
-	return ss.setupDao.GetFpList(objectCode)
+func (ss *setupService) GetFpList(objectCode string) ([]model.CdObjectFp, error) {
+	return dao.NewSetup(ss.ctx).GetFpList(objectCode)
 }
 
 //GetFpRole service
-func (ss *SetupService) GetFpRole(fpCode string) ([]model.BdRole, error) {
-	return ss.setupDao.GetFpRole(fpCode)
+func (ss *setupService) GetFpRole(fpCode string) ([]model.BdRole, error) {
+	return dao.NewSetup(ss.ctx).GetFpRole(fpCode)
 }
 
 //GetFpEmp service
-func (ss *SetupService) GetFpEmp(fpCode string) ([]model.BdEmp, error) {
-	return ss.setupDao.GetFpEmp(fpCode)
+func (ss *setupService) GetFpEmp(fpCode string) ([]model.BdEmp, error) {
+	return dao.NewSetup(ss.ctx).GetFpEmp(fpCode)
 }
 
 //GetRole service
-func (ss *SetupService) GetRoleByBranch(branchId int) ([]model.BdRole, error) {
-	return ss.setupDao.GetRoleByBranch(branchId)
+func (ss *setupService) GetRoleByBranch(branchId int) ([]model.BdRole, error) {
+	return dao.NewSetup(ss.ctx).GetRoleByBranch(branchId)
 }
 
 //GetEmp service
-func (ss *SetupService) GetEmp(branchId int) ([]model.DataEmpDir, error) {
-	return ss.setupDao.GetEmp(branchId)
+func (ss *setupService) GetEmp(branchId int) ([]model.DataEmpDir, error) {
+	return dao.NewSetup(ss.ctx).GetEmp(branchId)
 }
 
 //GetSysRoleHandle service
-func (ss *SetupService) GetSysRoleHandle(systemId int) ([]model.BdRole, error) {
-	return ss.setupDao.GetSysRoleHandle(systemId)
+func (ss *setupService) GetSysRoleHandle(systemId int) ([]model.BdRole, error) {
+	return dao.NewSetup(ss.ctx).GetSysRoleHandle(systemId)
 }
 
 //GetSysEmpHandle service
-func (ss *SetupService) GetSysEmpHandle(systemId int) ([]model.DataEmpDir, error) {
-	return ss.setupDao.GetSysEmpHandle(systemId)
+func (ss *setupService) GetSysEmpHandle(systemId int) ([]model.DataEmpDir, error) {
+	return dao.NewSetup(ss.ctx).GetSysEmpHandle(systemId)
 }
 
 //GetMenuRoleHandle service
-func (ss *SetupService) GetMenuRoleHandle(menuCode string) ([]model.BdRole, error) {
-	return ss.setupDao.GetMenuRoleHandle(menuCode)
+func (ss *setupService) GetMenuRoleHandle(menuCode string) ([]model.BdRole, error) {
+	return dao.NewSetup(ss.ctx).GetMenuRoleHandle(menuCode)
 }
 
 //GetMenuEmpHandle service
-func (ss *SetupService) GetMenuEmpHandle(menuCode string) ([]model.DataEmpDir, error) {
-	return ss.setupDao.GetMenuEmpHandle(menuCode)
+func (ss *setupService) GetMenuEmpHandle(menuCode string) ([]model.DataEmpDir, error) {
+	return dao.NewSetup(ss.ctx).GetMenuEmpHandle(menuCode)
 }
 
 //GetSystem service
-func (ss *SetupService) GetSystem() ([]model.BdSystem, error) {
-	return ss.setupDao.GetSystem()
+func (ss *setupService) GetSystem() ([]model.BdSystem, error) {
+	return dao.NewSetup(ss.ctx).GetSystem()
 }
 
 //AddSystem service
-func (ss *SetupService) AddSystem(system model.SystemWithRight) error {
+func (ss *setupService) AddSystem(system model.SystemWithRight) error {
 	tx, _ := database.OraDb.BeginTx()
 	systeminfo := system.SystemInfo
 	roles := system.RoleList
 	emps := system.EmpList
-	err := ss.setupDao.AddSystem(systeminfo, *tx)
+	err := dao.NewSetup(ss.ctx).AddSystem(systeminfo, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -179,7 +185,7 @@ func (ss *SetupService) AddSystem(system model.SystemWithRight) error {
 	i := 0
 	for ; i < len(roles); i++ {
 		r := roles[i]
-		err = ss.setupDao.AddSystemRole(systemId, r.Id, *tx)
+		err = dao.NewSetup(ss.ctx).AddSystemRole(systemId, r.Id, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -187,7 +193,7 @@ func (ss *SetupService) AddSystem(system model.SystemWithRight) error {
 	}
 	for i = 0; i < len(emps); i++ {
 		e := emps[i]
-		err = ss.setupDao.AddSystemEmp(systemId, e.Id, *tx)
+		err = dao.NewSetup(ss.ctx).AddSystemEmp(systemId, e.Id, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -202,23 +208,23 @@ func (ss *SetupService) AddSystem(system model.SystemWithRight) error {
 }
 
 //SetSystem service
-func (ss *SetupService) SetSystem(system model.SystemWithRight) error {
+func (ss *setupService) SetSystem(system model.SystemWithRight) error {
 	tx, _ := database.OraDb.BeginTx()
 	systeminfo := system.SystemInfo
 	roles := system.RoleList
 	emps := system.EmpList
-	err := ss.setupDao.SetSystem(systeminfo, *tx)
+	err := dao.NewSetup(ss.ctx).SetSystem(systeminfo, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	systemId := systeminfo.Id
-	err = ss.setupDao.DeleteSystemRole(systemId, *tx)
+	err = dao.NewSetup(ss.ctx).DeleteSystemRole(systemId, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = ss.setupDao.DeleteSystemEmp(systemId, *tx)
+	err = dao.NewSetup(ss.ctx).DeleteSystemEmp(systemId, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -226,7 +232,7 @@ func (ss *SetupService) SetSystem(system model.SystemWithRight) error {
 	i := 0
 	for ; i < len(roles); i++ {
 		r := roles[i]
-		err = ss.setupDao.AddSystemRole(systemId, r.Id, *tx)
+		err = dao.NewSetup(ss.ctx).AddSystemRole(systemId, r.Id, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -234,7 +240,7 @@ func (ss *SetupService) SetSystem(system model.SystemWithRight) error {
 	}
 	for i = 0; i < len(emps); i++ {
 		e := emps[i]
-		err = ss.setupDao.AddSystemEmp(systemId, e.Id, *tx)
+		err = dao.NewSetup(ss.ctx).AddSystemEmp(systemId, e.Id, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -249,20 +255,20 @@ func (ss *SetupService) SetSystem(system model.SystemWithRight) error {
 }
 
 //DeleteSystem service
-func (ss *SetupService) DeleteSystem(systemId int) error {
+func (ss *setupService) DeleteSystem(systemId int) error {
 	tx, _ := database.OraDb.BeginTx()
 
-	err := ss.setupDao.DeleteSystem(systemId, *tx)
+	err := dao.NewSetup(ss.ctx).DeleteSystem(systemId, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = ss.setupDao.DeleteSystemRole(systemId, *tx)
+	err = dao.NewSetup(ss.ctx).DeleteSystemRole(systemId, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = ss.setupDao.DeleteSystemEmp(systemId, *tx)
+	err = dao.NewSetup(ss.ctx).DeleteSystemEmp(systemId, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -276,27 +282,27 @@ func (ss *SetupService) DeleteSystem(systemId int) error {
 }
 
 //NewSysIdCenter service
-func (ss *SetupService) NewSysIdCenter() (int, error) {
-	return ss.setupDao.NewSysIdCenter()
+func (ss *setupService) NewSysIdCenter() (int, error) {
+	return dao.NewSetup(ss.ctx).NewSysIdCenter()
 }
 
 //NewSysId service
-func (ss *SetupService) NewSysId(branchId int) (int, error) {
-	return ss.setupDao.NewSysId(branchId)
+func (ss *setupService) NewSysId(branchId int) (int, error) {
+	return dao.NewSetup(ss.ctx).NewSysId(branchId)
 }
 
 //GetAllMenu service
-func (ss *SetupService) GetAllMenu() ([]model.BdMenu, error) {
-	return ss.setupDao.GetAllMenu()
+func (ss *setupService) GetAllMenu() ([]model.BdMenu, error) {
+	return dao.NewSetup(ss.ctx).GetAllMenu()
 }
 
 //AddMenu service
-func (ss *SetupService) AddMenu(menu model.MenuWithRight) error {
+func (ss *setupService) AddMenu(menu model.MenuWithRight) error {
 	tx, _ := database.OraDb.BeginTx()
 	menuinfo := menu.MenuInfo
 	roles := menu.RoleList
 	emps := menu.EmpList
-	err := ss.setupDao.AddMenu(menuinfo, *tx)
+	err := dao.NewSetup(ss.ctx).AddMenu(menuinfo, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -306,7 +312,7 @@ func (ss *SetupService) AddMenu(menu model.MenuWithRight) error {
 	i := 0
 	for ; i < len(roles); i++ {
 		r := roles[i]
-		err = ss.setupDao.AddMenuRole(systemId, r.Id, menuCode, *tx)
+		err = dao.NewSetup(ss.ctx).AddMenuRole(systemId, r.Id, menuCode, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -314,7 +320,7 @@ func (ss *SetupService) AddMenu(menu model.MenuWithRight) error {
 	}
 	for i = 0; i < len(emps); i++ {
 		e := emps[i]
-		err = ss.setupDao.AddMenuEmp(systemId, e.Id, menuCode, *tx)
+		err = dao.NewSetup(ss.ctx).AddMenuEmp(systemId, e.Id, menuCode, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -329,24 +335,24 @@ func (ss *SetupService) AddMenu(menu model.MenuWithRight) error {
 }
 
 //SetMenu service
-func (ss *SetupService) SetMenu(menu model.MenuWithRight) error {
+func (ss *setupService) SetMenu(menu model.MenuWithRight) error {
 	tx, _ := database.OraDb.BeginTx()
 	menuinfo := menu.MenuInfo
 	roles := menu.RoleList
 	emps := menu.EmpList
-	err := ss.setupDao.SetMenu(menuinfo, *tx)
+	err := dao.NewSetup(ss.ctx).SetMenu(menuinfo, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	systemId := menuinfo.SystemId
 	menuCode := menuinfo.Code
-	err = ss.setupDao.DeleteMenuRole(systemId, menuCode, *tx)
+	err = dao.NewSetup(ss.ctx).DeleteMenuRole(systemId, menuCode, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = ss.setupDao.DeleteMenuEmp(systemId, menuCode, *tx)
+	err = dao.NewSetup(ss.ctx).DeleteMenuEmp(systemId, menuCode, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -354,7 +360,7 @@ func (ss *SetupService) SetMenu(menu model.MenuWithRight) error {
 	i := 0
 	for ; i < len(roles); i++ {
 		r := roles[i]
-		err = ss.setupDao.AddMenuRole(systemId, r.Id, menuCode, *tx)
+		err = dao.NewSetup(ss.ctx).AddMenuRole(systemId, r.Id, menuCode, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -362,7 +368,7 @@ func (ss *SetupService) SetMenu(menu model.MenuWithRight) error {
 	}
 	for i = 0; i < len(emps); i++ {
 		e := emps[i]
-		err = ss.setupDao.AddMenuEmp(systemId, e.Id, menuCode, *tx)
+		err = dao.NewSetup(ss.ctx).AddMenuEmp(systemId, e.Id, menuCode, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -377,19 +383,19 @@ func (ss *SetupService) SetMenu(menu model.MenuWithRight) error {
 }
 
 //MoveMenu service
-func (ss *SetupService) MoveMenu(os, ns int, om, nm string) error {
+func (ss *setupService) MoveMenu(os, ns int, om, nm string) error {
 	tx, _ := database.OraDb.BeginTx()
-	err := ss.setupDao.MoveMenu(os, ns, om, nm, *tx)
+	err := dao.NewSetup(ss.ctx).MoveMenu(os, ns, om, nm, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = ss.setupDao.MoveMenuRole(os, ns, om, nm, *tx)
+	err = dao.NewSetup(ss.ctx).MoveMenuRole(os, ns, om, nm, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = ss.setupDao.MoveMenuEmp(os, ns, om, nm, *tx)
+	err = dao.NewSetup(ss.ctx).MoveMenuEmp(os, ns, om, nm, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -403,20 +409,20 @@ func (ss *SetupService) MoveMenu(os, ns int, om, nm string) error {
 }
 
 //DeleteMenu service
-func (ss *SetupService) DeleteMenu(systemId int, menuCode string) error {
+func (ss *setupService) DeleteMenu(systemId int, menuCode string) error {
 	tx, _ := database.OraDb.BeginTx()
 
-	err := ss.setupDao.DeleteMenu(systemId, menuCode, *tx)
+	err := dao.NewSetup(ss.ctx).DeleteMenu(systemId, menuCode, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = ss.setupDao.DeleteMenuRole(systemId, menuCode, *tx)
+	err = dao.NewSetup(ss.ctx).DeleteMenuRole(systemId, menuCode, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = ss.setupDao.DeleteMenuEmp(systemId, menuCode, *tx)
+	err = dao.NewSetup(ss.ctx).DeleteMenuEmp(systemId, menuCode, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -430,17 +436,17 @@ func (ss *SetupService) DeleteMenu(systemId int, menuCode string) error {
 }
 
 //SetFpRight service
-func (ss *SetupService) SetFpRight(fp model.FpWithRight) error {
+func (ss *setupService) SetFpRight(fp model.FpWithRight) error {
 	tx, _ := database.OraDb.BeginTx()
 	fpCode := fp.FpCode
 	roles := fp.RoleList
 	emps := fp.EmpList
-	err := ss.setupDao.DeleteFpRole(fpCode, *tx)
+	err := dao.NewSetup(ss.ctx).DeleteFpRole(fpCode, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = ss.setupDao.DeleteFpEmp(fpCode, *tx)
+	err = dao.NewSetup(ss.ctx).DeleteFpEmp(fpCode, *tx)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -448,7 +454,7 @@ func (ss *SetupService) SetFpRight(fp model.FpWithRight) error {
 	i := 0
 	for ; i < len(roles); i++ {
 		r := roles[i]
-		err = ss.setupDao.AddFpRole(fpCode, r.Id, *tx)
+		err = dao.NewSetup(ss.ctx).AddFpRole(fpCode, r.Id, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -456,7 +462,7 @@ func (ss *SetupService) SetFpRight(fp model.FpWithRight) error {
 	}
 	for i = 0; i < len(emps); i++ {
 		e := emps[i]
-		err = ss.setupDao.AddFpEmp(fpCode, e.Id, *tx)
+		err = dao.NewSetup(ss.ctx).AddFpEmp(fpCode, e.Id, *tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -471,22 +477,22 @@ func (ss *SetupService) SetFpRight(fp model.FpWithRight) error {
 }
 
 //GetParams service
-func (ss *SetupService) GetParams(branchId int) ([]model.BdParam, error) {
-	return ss.setupDao.GetParams(branchId)
+func (ss *setupService) GetParams(branchId int) ([]model.BdParam, error) {
+	return dao.NewSetup(ss.ctx).GetParams(branchId)
 }
 
 //SetParam service
-func (ss *SetupService) SetParam(param model.BdParam) error {
-	return ss.setupDao.SetParam(param)
+func (ss *setupService) SetParam(param model.BdParam) error {
+	return dao.NewSetup(ss.ctx).SetParam(param)
 }
 
 //GetParamsEmp service
-func (ss *SetupService) GetParamsEmp(empId int) ([]model.BdParamEmp, error) {
-	return ss.setupDao.GetParamsEmp(empId)
+func (ss *setupService) GetParamsEmp(empId int) ([]model.BdParamEmp, error) {
+	return dao.NewSetup(ss.ctx).GetParamsEmp(empId)
 }
 
 //SetParamEmp service
-func (ss *SetupService) SetParamEmp(param model.BdParamEmp) error {
-	return ss.setupDao.SetParamEmp(param)
+func (ss *setupService) SetParamEmp(param model.BdParamEmp) error {
+	return dao.NewSetup(ss.ctx).SetParamEmp(param)
 }
 

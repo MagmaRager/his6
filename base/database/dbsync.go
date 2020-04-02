@@ -3,6 +3,7 @@ package database
 import (
 	//"database/sql"
 	"errors"
+	"github.com/kataras/iris"
 	"reflect"
 	"strconv"
 )
@@ -18,7 +19,6 @@ type DBParamValue struct {
 
 var(
 	DBList []string	// 满足条件的数据库别名列表
-
 )
 
 /// 初始化DBList
@@ -26,7 +26,8 @@ func init() {
 	sql := "SELECT ALIAS FROM CD_DB_BRANCH " +
 		"WHERE IS_LOCAL = 0 AND STATE = 1"
 
-	err := OraDbCenter.Query(&DBList, sql)
+	var c iris.Context
+	err := OraDbCenter.Query(c, &DBList, sql)
 	if err != nil {
 
 	}
@@ -41,7 +42,8 @@ func GetTransactionId(alias string) (int, error) {
 	sql := "SELECT MAX(TRANSACTION_ID) FROM CD_AUTO_LOG " +
 		"WHERE DB_ALIAS = :1"
 
-	err := OraDbCenter.Find(&tid, sql, alias)
+	var c iris.Context
+	err := OraDbCenter.Find(c, &tid, sql, alias)
 	if err != nil {
 		return -1, err
 	}
@@ -66,7 +68,8 @@ func Do(tx Tx, sqlstr string, params ...interface{}) error{
 		i++
 	}
 
-	_, err := tx.Exec(sqlstr, params...)
+	var c iris.Context
+	_, err := tx.Exec(c, sqlstr, params...)
 	if err != nil {
 		return err
 		tx.Rollback()

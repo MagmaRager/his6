@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"his6/base/config"
 	"log"
+	"net/http"
 	"strconv"
 
 	consulapi "github.com/hashicorp/consul/api"
 )
 
-// func consulCheck(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprintln(w, "consulCheck")
-// }
+func consulCheck(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "consulCheck")
+}
 
 func init() {
 	regName := config.GetConfigString("app", "name", "")
@@ -49,12 +50,10 @@ func init() {
 	if err != nil {
 		log.Fatal("register server error : ", err)
 	}
-
-	//go runCheck()
-
+	go runCheck()
 }
 
-// func runCheck() { //反向访问check
-// 	http.HandleFunc("/check", consulCheck)
-// 	http.ListenAndServe(fmt.Sprintf(":%d", 8079), nil)
-// }
+func runCheck() { //反向访问check
+	http.HandleFunc("/check", consulCheck)
+	http.ListenAndServe(fmt.Sprintf(":%d", 8079), nil)
+}

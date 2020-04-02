@@ -6,9 +6,9 @@ import (
 	"his6/server/common/service"
 )
 
-var (
-	logined service.LoginService
-)
+//var (
+//	logined service.loginService
+//)
 
 //LoginedController struct
 type LoginedController struct {
@@ -35,7 +35,7 @@ func (lgn *LoginedController) GetParameter(ctx iris.Context) {
 	branchId, _ := ctx.URLParamInt("branchId")
 	parmName := ctx.URLParam("parmName")
 
-	parmVal, err := logined.GetParam(branchId, parmName)
+	parmVal, err := service.NewLogin(ctx).GetParam(branchId, parmName)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 	} else if parmVal.Valid {
@@ -53,7 +53,7 @@ func (lgn *LoginedController) PostParameter(ctx iris.Context) {
 	parmName := ctx.URLParam("parmName")
 	value := ctx.URLParam("value")
 
-	err := logined.SetParam(branchId, parmName, value)
+	err := service.NewLogin(ctx).SetParam(branchId, parmName, value)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -67,7 +67,7 @@ func (lgn *LoginedController) GetParameteremp(ctx iris.Context) {
 	empId, _ := ctx.URLParamInt("empId")
 	parmName := ctx.URLParam("parmName")
 
-	parmVal, err := logined.GetParamEmp(empId, parmName)
+	parmVal, err := service.NewLogin(ctx).GetParamEmp(empId, parmName)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 	} else if parmVal.Valid {
@@ -85,7 +85,7 @@ func (lgn *LoginedController) PostParameteremp(ctx iris.Context) {
 	parmName := ctx.URLParam("parmName")
 	value := ctx.URLParam("value")
 
-	err := logined.SetParamEmp(empId, parmName, value)
+	err := service.NewLogin(ctx).SetParamEmp(empId, parmName, value)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -98,7 +98,7 @@ func (lgn *LoginedController) PostParameteremp(ctx iris.Context) {
 func (lgn *LoginedController) GetEmpinfo(ctx iris.Context) {
 	empId, _ := ctx.URLParamInt("empId")
 
-	empInfo, err := logined.GetEmpInfo(empId)
+	empInfo, err := service.NewLogin(ctx).GetEmpInfo(empId)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -113,7 +113,7 @@ func (lgn *LoginedController) GetEmpinfo(ctx iris.Context) {
 func (lgn *LoginedController) GetRole(ctx iris.Context) {
 	empId, _ := ctx.URLParamInt("empId")
 
-	roles, err := logined.GetRoleEmp(empId)
+	roles, err := service.NewLogin(ctx).GetRoleEmp(empId)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -128,7 +128,7 @@ func (lgn *LoginedController) GetRole(ctx iris.Context) {
 func (lgn *LoginedController) GetAction(ctx iris.Context) {
 	empId, _ := ctx.URLParamInt("empId")
 
-	actions, err := logined.GetAction(empId)
+	actions, err := service.NewLogin(ctx).GetAction(empId)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -145,7 +145,7 @@ func (lgn *LoginedController) GetMenu(ctx iris.Context) {
 	systemId, _ := ctx.URLParamInt("systemId")
 	roles := ctx.URLParam("roles")
 
-	menus, err := logined.GetMenuEmp(empId, systemId, roles)
+	menus, err := service.NewLogin(ctx).GetMenuEmp(empId, systemId, roles)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)

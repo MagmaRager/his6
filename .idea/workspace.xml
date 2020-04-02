@@ -2,33 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d498162c-9fda-4d77-a5d7-89c43948bd65" name="默认的" comment="">
-      <change afterPath="$PROJECT_DIR$/base/validator/validate_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/base/validator/validate_utils.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/base/validator/validator.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/base/validator/validators.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/base/database/sqlmonitor.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/consul/consul_register.go" beforeDir="false" afterPath="$PROJECT_DIR$/base/consul/consul_register.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/database/dbsync.go" beforeDir="false" afterPath="$PROJECT_DIR$/base/database/dbsync.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/database/oracle.go" beforeDir="false" afterPath="$PROJECT_DIR$/base/database/oracle.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/base/middle/filter.go" beforeDir="false" afterPath="$PROJECT_DIR$/base/middle/filter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base/middle/jwt/jwttoken.go" beforeDir="false" afterPath="$PROJECT_DIR$/base/middle/jwt/jwttoken.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/base/router/router.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/common/dao/setup.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/common/dao/setup.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/common/dao/sys.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/common/dao/sys.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/common/handler/login.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/common/handler/login.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/common/handler/logined.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/common/handler/logined.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/common/handler/setup.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/common/handler/setup.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/common/model/action.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/common/model/action.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/common/model/logininput.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/common/model/logininput.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/common/service/login.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/common/service/login.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/common/service/setup.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/common/service/setup.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/conf/new_his.conf" beforeDir="false" afterPath="$PROJECT_DIR$/server/conf/new_his.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/demo/demo.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/demo1/dao/dao_emp.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/demo1/dao/dao_menu.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/demo1/demo1.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/demo1/demo1_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/demo1/service/login_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/demo1/service/service_login.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/model/bdictemp.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/model/bdictmenu.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +56,7 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
     <property name="go.import.settings.migrated" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/base/validator" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../test" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="项目" />
@@ -182,46 +170,46 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="242" y="12" width="1006" height="656" key="#xdebugger.XInspectDialog/0.0.1280.680@0.0.1280.680" timestamp="1582549074979" />
-    <state width="844" height="618" key="DebuggerActiveHint" timestamp="1583290846919">
+    <state width="844" height="618" key="DebuggerActiveHint" timestamp="1585709803804">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="844" height="618" key="DebuggerActiveHint/0.0.1280.680@0.0.1280.680" timestamp="1583290846919" />
-    <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1582792307882">
+    <state width="844" height="618" key="DebuggerActiveHint/0.0.1280.680@0.0.1280.680" timestamp="1585709803804" />
+    <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1583721123499">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1582792307882" />
-    <state width="1237" height="155" key="GridCell.Tab.0.bottom" timestamp="1583374262040">
+    <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1583721123499" />
+    <state width="1018" height="-12" key="GridCell.Tab.0.bottom" timestamp="1585813132721">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="155" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1583374262040" />
-    <state width="1237" height="155" key="GridCell.Tab.0.center" timestamp="1583374262040">
+    <state width="1018" height="-12" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1585813132721" />
+    <state width="1018" height="-12" key="GridCell.Tab.0.center" timestamp="1585813132721">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="155" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1583374262040" />
-    <state width="1237" height="155" key="GridCell.Tab.0.left" timestamp="1583374262040">
+    <state width="1018" height="-12" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1585813132721" />
+    <state width="1018" height="-12" key="GridCell.Tab.0.left" timestamp="1585813132721">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="155" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1583374262040" />
-    <state width="1237" height="155" key="GridCell.Tab.0.right" timestamp="1583374262040">
+    <state width="1018" height="-12" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1585813132721" />
+    <state width="1018" height="-12" key="GridCell.Tab.0.right" timestamp="1585813132721">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="155" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1583374262040" />
-    <state width="1237" height="155" key="GridCell.Tab.1.bottom" timestamp="1583374261955">
+    <state width="1018" height="-12" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1585813132721" />
+    <state width="1019" height="-12" key="GridCell.Tab.1.bottom" timestamp="1585813132458">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="155" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1583374261955" />
-    <state width="1237" height="155" key="GridCell.Tab.1.center" timestamp="1583374261954">
+    <state width="1019" height="-12" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1585813132458" />
+    <state width="1019" height="-12" key="GridCell.Tab.1.center" timestamp="1585813132458">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="155" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1583374261954" />
-    <state width="1237" height="155" key="GridCell.Tab.1.left" timestamp="1583374261954">
+    <state width="1019" height="-12" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1585813132458" />
+    <state width="1019" height="-12" key="GridCell.Tab.1.left" timestamp="1585813132458">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="155" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1583374261954" />
-    <state width="1237" height="155" key="GridCell.Tab.1.right" timestamp="1583374261955">
+    <state width="1019" height="-12" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1585813132458" />
+    <state width="1019" height="-12" key="GridCell.Tab.1.right" timestamp="1585813132458">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="155" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1583374261955" />
+    <state width="1019" height="-12" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1585813132458" />
     <state x="91" y="0" key="SettingsEditor" timestamp="1579095641058">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -230,6 +218,10 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="647" height="347" key="XDebugger.FullValuePopup/0.0.1280.680@0.0.1280.680" timestamp="1583289407664" />
+    <state x="415" y="0" key="com.goide.refactor.move.GoMoveDeclarationDialog" timestamp="1584317575797">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="415" y="0" key="com.goide.refactor.move.GoMoveDeclarationDialog/0.0.1280.680@0.0.1280.680" timestamp="1584317575797" />
     <state x="192" y="0" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1583216570182">
       <screen x="0" y="0" width="1280" height="680" />
     </state>

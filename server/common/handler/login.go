@@ -9,9 +9,9 @@ import (
 	"strconv"
 )
 
-var (
-	login service.LoginService
-)
+//var (
+//	login service.loginService
+//)
 
 //LoginController struct
 type LoginController struct {
@@ -34,7 +34,7 @@ func init() {
 /// SYS-001
 /// /sys/date
 func (lgn *LoginController) GetDate(ctx iris.Context) {
-	now, err := login.Sysdate()
+	now, err := service.NewLogin(ctx).Sysdate()
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -50,12 +50,12 @@ func (lgn *LoginController) PostLogin(ctx iris.Context) {
 	var ety = model.LoginInput{}
 	_ = ctx.ReadForm(&ety)
 
-	status, _ := login.Login(ety.EmpCode, ety.Password)
+	status, _ := service.NewLogin(ctx).Login(ety.EmpCode, ety.Password)
 	s := strconv.Itoa(status)
 
 	// 新的JWT token
-	empId, _ := login.GetEmpid(ety.EmpCode)
-	actions, _ := logined.GetAction(empId)
+	empId, _ := service.NewLogin(ctx).GetEmpid(ety.EmpCode)
+	actions, _ := service.NewLogin(ctx).GetAction(empId)
 	var autStr string
 	for _, action := range actions {
 		autStr += action.Code
@@ -75,7 +75,7 @@ func (lgn *LoginController) PostLogin(ctx iris.Context) {
 func (lgn *LoginController) GetBranch(ctx iris.Context) {
 	branchId, _ := ctx.URLParamInt("branchId")
 
-	branch, err := login.GetBranch(branchId)
+	branch, err := service.NewLogin(ctx).GetBranch(branchId)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -89,7 +89,7 @@ func (lgn *LoginController) GetBranch(ctx iris.Context) {
 func (lgn *LoginController) GetSystem(ctx iris.Context) {
 	empId, _ := ctx.URLParamInt("empId")
 
-	systems, err := login.GetSystemEmp(empId)
+	systems, err := service.NewLogin(ctx).GetSystemEmp(empId)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -104,7 +104,7 @@ func (lgn *LoginController) GetSystem(ctx iris.Context) {
 func (lgn *LoginController) GetEmpid(ctx iris.Context) {
 	empCode := ctx.URLParam("empCode")
 
-	empId, err := login.GetEmpid(empCode)
+	empId, err := service.NewLogin(ctx).GetEmpid(empCode)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -119,7 +119,7 @@ func (lgn *LoginController) GetEmpid(ctx iris.Context) {
 func (lgn *LoginController) GetSystemdefault(ctx iris.Context) {
 	empId, _ := ctx.URLParamInt("empId")
 
-	parmVal, err := login.GetParamEmp(empId, "DEF_SYSTEM")
+	parmVal, err := service.NewLogin(ctx).GetParamEmp(empId, "DEF_SYSTEM")
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 	} else if parmVal.Valid {

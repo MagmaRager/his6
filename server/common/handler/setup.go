@@ -9,9 +9,9 @@ import (
 	"strconv"
 )
 
-var (
-	setup service.SetupService
-)
+//var (
+//	setup service.setupService
+//)
 
 //SetupController struct
 type SetupController struct {
@@ -65,7 +65,7 @@ func (stp *SetupController) PostNewpsw(ctx iris.Context) {
 	opsw := ctx.URLParam("opsw")
 	npsw := ctx.URLParam("npsw")
 
-	i, err := setup.SetNewPsw(empId, opsw, npsw)
+	i, err := service.NewSetup(ctx).SetNewPsw(empId, opsw, npsw)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -82,7 +82,7 @@ func (stp *SetupController) GetFuncpoint(ctx iris.Context) {
 	empId, _ := ctx.URLParamInt("empId")
 	roles := ctx.URLParam("roles")
 
-	fp, err := setup.GetFp(empId, fpCode, roles)
+	fp, err := service.NewSetup(ctx).GetFp(empId, fpCode, roles)
 	if err != nil {
 		// 业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -95,7 +95,7 @@ func (stp *SetupController) GetFuncpoint(ctx iris.Context) {
 /// SETUP-003
 /// /setup/module
 func (stp *SetupController) GetModule(ctx iris.Context) {
-	modules, err := setup.GetModule()
+	modules, err := service.NewSetup(ctx).GetModule()
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -108,7 +108,7 @@ func (stp *SetupController) GetModule(ctx iris.Context) {
 /// SETUP-004
 /// /setup/object
 func (stp *SetupController) GetObject(ctx iris.Context) {
-	objects, err := setup.GetObject()
+	objects, err := service.NewSetup(ctx).GetObject()
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -130,7 +130,7 @@ func (stp *SetupController) PostModuleadd(ctx iris.Context) {
 	var objects = []model.CdObject{}
 	json.Unmarshal([]byte(ety.ObjectJson), &objects)
 
-	err := setup.AddModule(module, objects)
+	err := service.NewSetup(ctx).AddModule(module, objects)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		ctx.Next()
@@ -146,7 +146,7 @@ func (stp *SetupController) PostObjectadd(ctx iris.Context) {
 	var ety []model.CdObject
 	_ = ctx.ReadJSON(&ety)
 
-	err := setup.AddObject(ety)
+	err := service.NewSetup(ctx).AddObject(ety)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		ctx.Next()
@@ -162,7 +162,7 @@ func (stp *SetupController) PostModuleset(ctx iris.Context) {
 	var ety = model.CdModule{}
 	_ = ctx.ReadJSON(&ety)
 
-	err := setup.SetModule(ety)
+	err := service.NewSetup(ctx).SetModule(ety)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -176,7 +176,7 @@ func (stp *SetupController) PostObjectset(ctx iris.Context) {
 	var ety = model.CdObject{}
 	_ = ctx.ReadJSON(&ety)
 
-	err := setup.SetObject(ety)
+	err := service.NewSetup(ctx).SetObject(ety)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		ctx.Next()
@@ -191,7 +191,7 @@ func (stp *SetupController) PostObjectset(ctx iris.Context) {
 func (stp *SetupController) GetFplist(ctx iris.Context) {
 	objectCode := ctx.URLParam("objectCode")
 
-	fps, err := setup.GetFpList(objectCode)
+	fps, err := service.NewSetup(ctx).GetFpList(objectCode)
 		if err != nil {
 		// 业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -205,7 +205,7 @@ func (stp *SetupController) GetFplist(ctx iris.Context) {
 func (stp *SetupController) GetFprole(ctx iris.Context) {
 	fpCode := ctx.URLParam("fpCode")
 
-	roles, err := setup.GetFpRole(fpCode)
+	roles, err := service.NewSetup(ctx).GetFpRole(fpCode)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -220,7 +220,7 @@ func (stp *SetupController) GetFprole(ctx iris.Context) {
 func (stp *SetupController) GetFpemp(ctx iris.Context) {
 	fpCode := ctx.URLParam("fpCode")
 
-	emps, err := setup.GetFpEmp(fpCode)
+	emps, err := service.NewSetup(ctx).GetFpEmp(fpCode)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -235,7 +235,7 @@ func (stp *SetupController) GetFpemp(ctx iris.Context) {
 func (stp *SetupController) GetRole(ctx iris.Context) {
 	branchId, _ := ctx.URLParamInt("branchId")
 
-	roles, err := setup.GetRoleByBranch(branchId)
+	roles, err := service.NewSetup(ctx).GetRoleByBranch(branchId)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -250,7 +250,7 @@ func (stp *SetupController) GetRole(ctx iris.Context) {
 func (stp *SetupController) GetEmp(ctx iris.Context) {
 	branchId, _ := ctx.URLParamInt("branchId")
 
-	emps, err := setup.GetEmp(branchId)
+	emps, err := service.NewSetup(ctx).GetEmp(branchId)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -265,7 +265,7 @@ func (stp *SetupController) GetEmp(ctx iris.Context) {
 func (stp *SetupController) GetSysrole(ctx iris.Context) {
 	branchId, _ := ctx.URLParamInt("systemId")
 
-	roles, err := setup.GetSysRoleHandle(branchId)
+	roles, err := service.NewSetup(ctx).GetSysRoleHandle(branchId)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -280,7 +280,7 @@ func (stp *SetupController) GetSysrole(ctx iris.Context) {
 func (stp *SetupController) GetSysemp(ctx iris.Context) {
 	branchId, _ := ctx.URLParamInt("systemId")
 
-	emps, err := setup.GetSysEmpHandle(branchId)
+	emps, err := service.NewSetup(ctx).GetSysEmpHandle(branchId)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -295,7 +295,7 @@ func (stp *SetupController) GetSysemp(ctx iris.Context) {
 func (stp *SetupController) GetMenurole(ctx iris.Context) {
 	menuCode := ctx.URLParam("menuCode")
 
-	roles, err := setup.GetMenuRoleHandle(menuCode)
+	roles, err := service.NewSetup(ctx).GetMenuRoleHandle(menuCode)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -310,7 +310,7 @@ func (stp *SetupController) GetMenurole(ctx iris.Context) {
 func (stp *SetupController) GetMenuemp(ctx iris.Context) {
 	menuCode := ctx.URLParam("menuCode")
 
-	emps, err := setup.GetMenuEmpHandle(menuCode)
+	emps, err := service.NewSetup(ctx).GetMenuEmpHandle(menuCode)
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -323,7 +323,7 @@ func (stp *SetupController) GetMenuemp(ctx iris.Context) {
 /// SETUP-018
 /// /setup/systemget
 func (stp *SetupController) GetSystemget(ctx iris.Context) {
-	systems, err := setup.GetSystem()
+	systems, err := service.NewSetup(ctx).GetSystem()
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -339,7 +339,7 @@ func (stp *SetupController) PostSystemadd(ctx iris.Context) {
 	var ety = model.SystemWithRight{}
 	_ = ctx.ReadJSON(&ety)
 
-	err := setup.AddSystem(ety)
+	err := service.NewSetup(ctx).AddSystem(ety)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -354,7 +354,7 @@ func (stp *SetupController) PostSystemset(ctx iris.Context) {
 	var ety = model.SystemWithRight{}
 	_ = ctx.ReadJSON(&ety)
 
-	err := setup.SetSystem(ety)
+	err := service.NewSetup(ctx).SetSystem(ety)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -370,7 +370,7 @@ func (stp *SetupController) PostSystemdelete(ctx iris.Context) {
 	//_ = ctx.ReadForm(&systemId)
 	systemId, _ := ctx.URLParamInt("systemId")
 
-	err := setup.DeleteSystem(systemId)
+	err := service.NewSetup(ctx).DeleteSystem(systemId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -382,7 +382,7 @@ func (stp *SetupController) PostSystemdelete(ctx iris.Context) {
 /// SETUP-022
 /// /setup/newsysidcenter
 func (stp *SetupController) GetNewsysidcenter(ctx iris.Context) {
-	nid, err := setup.NewSysIdCenter()
+	nid, err := service.NewSetup(ctx).NewSysIdCenter()
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 	}
@@ -394,7 +394,7 @@ func (stp *SetupController) GetNewsysidcenter(ctx iris.Context) {
 /// /setup/newsysid
 func (stp *SetupController) GetNewsysid(ctx iris.Context) {
 	branchId, _ := ctx.URLParamInt("branchId")
-	nid, err := setup.NewSysId(branchId)
+	nid, err := service.NewSetup(ctx).NewSysId(branchId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 	}
@@ -405,7 +405,7 @@ func (stp *SetupController) GetNewsysid(ctx iris.Context) {
 /// SETUP-024
 /// /setup/menuget
 func (stp *SetupController) GetMenuget(ctx iris.Context) {
-	menus, err := setup.GetAllMenu()
+	menus, err := service.NewSetup(ctx).GetAllMenu()
 	if err != nil {
 		//  业务错误
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -421,7 +421,7 @@ func (stp *SetupController) PostMenuadd(ctx iris.Context) {
 	var ety = model.MenuWithRight{}
 	_ = ctx.ReadJSON(&ety)
 
-	err := setup.AddMenu(ety)
+	err := service.NewSetup(ctx).AddMenu(ety)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -436,7 +436,7 @@ func (stp *SetupController) PostMenuset(ctx iris.Context) {
 	var ety = model.MenuWithRight{}
 	_ = ctx.ReadJSON(&ety)
 
-	err := setup.SetMenu(ety)
+	err := service.NewSetup(ctx).SetMenu(ety)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -452,7 +452,7 @@ func (stp *SetupController) PostMenumove(ctx iris.Context) {
 	ns, _ := ctx.URLParamInt("newSystem")
 	nm := ctx.URLParam("newMenu")
 
-	err := setup.MoveMenu(os, ns, om, nm)
+	err := service.NewSetup(ctx).MoveMenu(os, ns, om, nm)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -467,7 +467,7 @@ func (stp *SetupController) PostMenudelete(ctx iris.Context) {
 	systemId, _ := ctx.URLParamInt("systemId")
 	menuCode := ctx.URLParam("menuCode")
 
-	err := setup.DeleteMenu(systemId, menuCode)
+	err := service.NewSetup(ctx).DeleteMenu(systemId, menuCode)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -482,7 +482,7 @@ func (stp *SetupController) PostFprightset(ctx iris.Context) {
 	var ety = model.FpWithRight{}
 	_ = ctx.ReadJSON(&ety)
 
-	err := setup.SetFpRight(ety)
+	err := service.NewSetup(ctx).SetFpRight(ety)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -496,7 +496,7 @@ func (stp *SetupController) PostFprightset(ctx iris.Context) {
 func (stp *SetupController) GetParams(ctx iris.Context) {
 	branchId, _ := ctx.URLParamInt("branchId")
 
-	parms, err := setup.GetParams(branchId)
+	parms, err := service.NewSetup(ctx).GetParams(branchId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -510,7 +510,7 @@ func (stp *SetupController) PostParamset(ctx iris.Context) {
 	var ety = model.BdParam{}
 	_ = ctx.ReadJSON(&ety)
 
-	err := setup.SetParam(ety)
+	err := service.NewSetup(ctx).SetParam(ety)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -523,7 +523,7 @@ func (stp *SetupController) PostParamset(ctx iris.Context) {
 func (stp *SetupController) GetParamsemp(ctx iris.Context) {
 	empId, _ := ctx.URLParamInt("empId")
 
-	parms, err := setup.GetParamsEmp(empId)
+	parms, err := service.NewSetup(ctx).GetParamsEmp(empId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
@@ -537,7 +537,7 @@ func (stp *SetupController) PostParamempset(ctx iris.Context) {
 	var ety = model.BdParamEmp{}
 	_ = ctx.ReadJSON(&ety)
 
-	err := setup.SetParamEmp(ety)
+	err := service.NewSetup(ctx).SetParamEmp(ety)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"github.com/kataras/iris"
 	"his6/base/convert"
 	"his6/base/crypto"
 	"his6/base/message"
@@ -130,7 +131,7 @@ func (tx *Tx) Rollback() error {
 }
 
 //Exec 执行返回影响记录数
-func (tx *Tx) Exec(sql string, args ...interface{}) (int64, error) {
+func (tx *Tx) Exec(ctx iris.Context, sql string, args ...interface{}) (int64, error) {
 	st := time.Now()
 	rst, err := tx.sqltx.Exec(sql, args...)
 
@@ -151,7 +152,7 @@ func (tx *Tx) Exec(sql string, args ...interface{}) (int64, error) {
 			parms[i] = str
 		}
 		slowsql.Params = parms
-		slowsql.Duration = bt
+		slowsql.Duration = bt * 1000
 
 		cvb, err := json.Marshal(slowsql)
 		if err != nil {
@@ -160,26 +161,155 @@ func (tx *Tx) Exec(sql string, args ...interface{}) (int64, error) {
 		cvs := convert.Byte2Str(cvb)
 		message.Send("slowsql", cvs)
 	}
+	if ctx != nil {
+		header := ctx.Values().GetString("SQLM")
+		if len(header) > 0 {
+			var sqlmon = SQLMonitor{}
+			sqlmon.Node = header
+			sqlmon.Time = et.Format("2006-01-02 15:04:05.006")
+			sqlmon.ExecuteSQL = sql
+			parms := make([]string, len(args))
+			for i, arg := range args {
+				switch val := arg.(type) {
+				case int:
+					parms[i] = strconv.Itoa(val)
+				case string:
+					parms[i] = val
+				}
+			}
+			sqlmon.Parameters = parms
+			sqlmon.Duration = bt * 1000
+
+			cvb, err := json.Marshal(sqlmon)
+			if err != nil {
+				logs.Error("慢查询json转化失败")
+			}
+			cvs := convert.Byte2Str(cvb)
+			message.Publish(header, cvs)
+		}
+	}
 
 	return rst.RowsAffected()
 }
 
-
-
 //Find 查询单行结果, 返回错误
-func (oracle OracleDb) Find(rst interface{}, sql string, args ...interface{}) error {
+func (oracle OracleDb) Find(ctx iris.Context, rst interface{}, sql string, args ...interface{}) error {
+	if ctx != nil {
+		header := ctx.Values().GetString("SQLM")
+		if len(header) > 0 {
+			st := time.Now()
+			err := sqlx.Get(oracle.db, rst, sql, args...)
+			et := time.Now()
+			bt := et.Sub(st).Seconds()
+
+			var sqlmon = SQLMonitor{}
+			sqlmon.Node = header
+			sqlmon.Time = et.Format("2006-01-02 15:04:05.006")
+			sqlmon.ExecuteSQL = sql
+			parms := make([]string, len(args))
+			for i, arg := range args {
+				switch val := arg.(type) {
+				case int:
+					parms[i] = strconv.Itoa(val)
+				case string:
+					parms[i] = val
+				}
+			}
+			sqlmon.Parameters = parms
+			sqlmon.Duration = bt * 1000
+
+			cvb, err := json.Marshal(sqlmon)
+			if err != nil {
+				logs.Error("慢查询json转化失败")
+			}
+			cvs := convert.Byte2Str(cvb)
+			message.Publish(header, cvs)
+			return err
+		}
+	}
 	return sqlx.Get(oracle.db, rst, sql, args...)
 }
 
 //Query 查询多行结果，返回错误
-func (oracle OracleDb) Query(rst interface{}, sql string, args ...interface{}) error {
+func (oracle OracleDb) Query(ctx iris.Context, rst interface{}, sql string, args ...interface{}) error {
+	if ctx != nil {
+		header := ctx.Values().GetString("SQLM")
+		if len(header) > 0 {
+			st := time.Now()
+			err := sqlx.Select(oracle.db, rst, sql, args...)
+			et := time.Now()
+			bt := et.Sub(st).Seconds()
+
+			var sqlmon = SQLMonitor{}
+			sqlmon.Node = header
+			sqlmon.Time = et.Format("2006-01-02 15:04:05.006")
+			sqlmon.ExecuteSQL = sql
+			parms := make([]string, len(args))
+			for i, arg := range args {
+				switch val := arg.(type) {
+				case int:
+					parms[i] = strconv.Itoa(val)
+				case string:
+					parms[i] = val
+				}
+			}
+			sqlmon.Parameters = parms
+			sqlmon.Duration = bt * 1000
+
+			cvb, err := json.Marshal(sqlmon)
+			if err != nil {
+				logs.Error("慢查询json转化失败")
+			}
+			cvs := convert.Byte2Str(cvb)
+			message.Publish(header, cvs)
+			return err
+		}
+	}
 	return sqlx.Select(oracle.db, rst, sql, args...)
 }
 
 //QueryWithCache 查询多行结果（优先从缓存获取），返回错误
-func (oracle OracleDb) QueryWithCache(key string, rst interface{}, sql string, args ...interface{}) error {
+func (oracle OracleDb) QueryWithCache(ctx iris.Context, key string, rst interface{}, sql string, args ...interface{}) error {
 	err := cache.GetData(key, rst)
 	if err != nil {
+		if ctx != nil {
+			header := ctx.Values().GetString("SQLM")
+			if len(header) > 0 {
+				st := time.Now()
+				// 查询与结果遍历
+				err = sqlx.Select(oracle.db, rst, sql, args...)
+				if err != nil {
+					return err
+				}
+				et := time.Now()
+				bt := et.Sub(st).Seconds()
+
+				var sqlmon = SQLMonitor{}
+				sqlmon.Node = header
+				sqlmon.Time = et.Format("2006-01-02 15:04:05.006")
+				sqlmon.ExecuteSQL = sql
+				parms := make([]string, len(args))
+				for i, arg := range args {
+					switch val := arg.(type) {
+					case int:
+						parms[i] = strconv.Itoa(val)
+					case string:
+						parms[i] = val
+					}
+				}
+				sqlmon.Parameters = parms
+				sqlmon.Duration = bt * 1000
+
+				cvb, err := json.Marshal(sqlmon)
+				if err != nil {
+					logs.Error("慢查询json转化失败")
+				}
+				cvs := convert.Byte2Str(cvb)
+				message.Publish(header, cvs)
+				cache.SetData(key, rst)
+				return err
+			}
+		}
 		// 查询与结果遍历
 		err = sqlx.Select(oracle.db, rst, sql, args...)
 		if err != nil {
